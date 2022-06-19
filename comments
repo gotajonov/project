@@ -1,0 +1,13 @@
+(Gulomjon's team)
+
+Terraform:
+1. AMI could be automated instead of manual providing (https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami)
+2. public key for ssh key pair could be a separate file and uploaded with file function
+resource "aws_key_pair" "nhw76" {
+public_key = file("~/.ssh/id_rsa.pub")
+}
+3. missing few variables
+4. did not use tfvars file (https://spacelift.io/blog/terraform-tfvars)
+5. github repo code has static variable
+6. did not use module
+7. Missing Readme file for tf module (https://www.redpill-linpro.com/techblog/2021/02/11/terraform_documentation_with_terraform_docs.html)
