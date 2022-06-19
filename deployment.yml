@@ -1,0 +1,32 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: java-app
+spec:
+  selector:
+    matchLabels:
+      app: devops-project
+  replicas: 2 # tells deployment to run 2 pods matching the template
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: devops-project
+    spec:
+      containers:
+      - name: devops-project
+        image: kbodushev/java_app:1.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+    tolerations:
+      - effect: NoSchedule
+        #key: app
+        operator: Equal
+        #value: frontend
+        nodeName: ip-10-0-1-222.ec2.internal
+        restartPolicy: Always
