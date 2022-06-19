@@ -1,0 +1,90 @@
+inventory
+[Jenkins]
+10.0.1.151 ansible_ssh_private_key_file=/home/ec2-user/ansible_DevOps2022/ssh-key.pem
+
+[Kubernetes]
+52.54.197.154 ansible_ssh_private_key_file=/home/ec2-user/ansible_DevOps2022/ssh-key.pem
+
+
+install-jenkins.yaml
+
+---
+- hosts: Jenkins
+  become: yes
+  remote_user: ec2-user
+  become_user: root
+  tasks:
+    - name: Download Long Term Jenkins release
+      get_url:
+        url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+        dest: /etc/yum.repos.d/jenkins.repo
+
+    - name: Import jenkins key from url
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+    - name: yum update
+      yum:
+        name: '*'
+        state: latest 
+
+    - name: Install java
+      yum:
+        name: java-11-openjdk-devel
+        state: present
+
+    - name: Install jenkins
+      yum:
+        name: jenkins
+        state: latest
+
+    - name: daemon-reload to pick up config changes
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Start jenkins
+      ansible.builtin.systemd:
+        name: jenkins
+        state: started
+
+    - name: Install Git
+      yum:
+        name: git
+        state: latest
+        
+    - name: Docker repo
+      yum_repository:
+        #name: docker
+        #description: repo for docker
+        #baseurl: https://download.docker.com/linux/centos/7/x86_64/stable/
+        #gpgcheck: no
+        name: Docker CE Stable - $basearch
+        baseurl: https://download.docker.com/linux/centos/$releasever/$basearch/stable
+        enabled: 1
+        gpgcheck: 1
+        gpgkey: https://download.docker.com/linux/centos/gpg
+        sslverify: 0
+    - name: Installing docker
+      command:
+        cmd: yum install docker-ce --nobest -y
+    - name: install python3.6
+      package:
+        name: python36
+        state: present
+    - name: Starting and enabling docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+    - name: Add the current user to the docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes
+    - name: change permisson
+      file:
+        path: /var/run/docker.sock
+        mode: 0666
+...
+
