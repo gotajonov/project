@@ -1,0 +1,20 @@
+Homework:
+1. Create key_pair with terraform
+2. Use key_pair to create ec2
+3. ssh into ec2 that you create with terraform and test (sudo yum install httpd -y)
+
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/key_pair
+
+4. Create load balancer and target group 
+
+#create application load balacner
+
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb
+
+# create lb target group
+
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group
+
+#attach ec2 we created to target group
+
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group_attachment
